@@ -27,7 +27,7 @@
 # Usage: no parameters, settings mostly defined in xcode project
 #
 
-opts="SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES"
+opts="SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES CODE_SIGN_IDENTITY=- CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO"
 
 dd=./DerivedData
 archivesPath="$dd/Archives"

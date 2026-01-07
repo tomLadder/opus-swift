@@ -30,8 +30,6 @@
 # - git clone of https://github.com/xiph/opus in directory ../opus
 # - checked iosSDKVersion and osxSDKVersion
 
-iosSDKVersion="15.5"
-osxSDKVersion="12.3"
 opusDownload="https://archive.mozilla.org/pub/opus/opus-1.3.1.tar.gz"
 here=$(pwd)
 
@@ -52,6 +50,10 @@ opusHeadersDst=./opus-swift/include
 
 tmp=./prepare
 fatLibsDest=opus-swift/libs
+
+xcodePlatforms="/Applications/Xcode.app/Contents/Developer/Platforms"
+sdkSimulator="$xcodePlatforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk"
+sdkPhone="$xcodePlatforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk"
 
 generateLibopus()
 {
@@ -88,13 +90,7 @@ generateLibopus()
     cd $here
     cp "$opuspath/$opusArtifact" "$tmp/$product"
     echo "generated $product, see $logfile\n"
-    lipo -i "$tmp/$product"
 }
-
-xcodePlatforms="/Applications/Xcode.app/Contents/Developer/Platforms"
-sdkSimulator="$xcodePlatforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator$iosSDKVersion.sdk"
-sdkPhone="/$xcodePlatforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS$iosSDKVersion.sdk"
-sdkMac="/$xcodePlatforms/MacOSX.platform/Developer/SDKs/MacOSX$osxSDKVersion.sdk"
 
 cd $opuspath
 make distclean
@@ -109,63 +105,30 @@ mkdir -p $fatLibsDest
 fatProductIos="libopus_ios.a"
 echo "\n==========================="
 echo "generate $fatProductIos ..."
-generateLibopus "arm-apple-darwin" "armv7" $sdkPhone
 generateLibopus "arm-apple-darwin" "arm64" $sdkPhone
 cd $tmp
 products=`ls | grep libopus | grep iPhoneOS`
 echo "generating $fatProductIos from ${products} ..."
-lipo -create ${products} -output $fatProductIos
+cp ${products} $fatProductIos
 cd $here
 cp -v $tmp/$fatProductIos $fatLibsDest
-lipo -info $fatLibsDest/$fatProductIos
 echo "$fatLibsDest/$fatProductIos generated."
 echo "\n==========================="
 
 fatProductIosSim="libopus_ios_sim.a"
 echo "\n==========================="
 echo "generate $fatProductIosSim ..."
-generateLibopus "x86_64-apple-darwin" "x86_64" $sdkSimulator
 generateLibopus "arm-apple-darwin" "arm64" $sdkSimulator
 cd $tmp
 products=`ls | grep libopus | grep iPhoneSimulator`
 echo "generating $fatProductIosSim from ${products} ..."
-lipo -create ${products} -output $fatProductIosSim
+cp ${products} $fatProductIosSim
 cd $here
 cp -v $tmp/$fatProductIosSim $fatLibsDest
-lipo -info $fatLibsDest/$fatProductIosSim
 echo "$fatLibsDest/$fatProductIosSim generated."
 echo "\n==========================="
 
 
-fatProductMac="libopus_osx.a"
-echo "\n==========================="
-echo "generate $fatProductMac ..."
-generateLibopus "x86_64-apple-darwin20.2.0" "x86_64" $sdkMac
-generateLibopus "aarch64-apple-darwin20.0.0" "arm64" $sdkMac
-cd $tmp
-products=`ls | grep libopus | grep Mac`
-echo "generating $fatProductMac from ${products} ..."
-lipo -create ${products} -output $fatProductMac
-cd $here
-cp -v $tmp/$fatProductMac $fatLibsDest
-lipo -info $fatLibsDest/$fatProductMac
-echo "$fatLibsDest/$fatProductMac ready."
-echo "\n==========================="
-
-
-fatProductCatalyst="libopus_catalyst.a"
-echo "\n==========================="
-echo "generate $fatProductCatalyst ..."
-generateLibopus "x86_64-apple-darwin20.2.0" "x86_64h" $sdkMac
-cd $tmp
-products=`ls | grep libopus | grep x86_64h`
-echo "generating $fatProductCatalyst from ${products} ..."
-lipo -create ${products} -output $fatProductCatalyst
-cd $here
-cp -v $tmp/$fatProductCatalyst $fatLibsDest
-lipo -info $fatLibsDest/$fatProductCatalyst
-echo "$fatLibsDest/$fatProductCatalyst ready."
-echo "\n==========================="
 echo "generating libraries done."
 
 echo "\n==========================="

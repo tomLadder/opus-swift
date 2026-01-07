@@ -51,10 +51,9 @@ Pod::Spec.new do |s|
                           LICENSE
                         }
     s.author           = { 'Florian Nowotny' => 'Florian.Nowotny@nacamar.de' }
-    s.source           = { :http => 'https://github.com/ybrid/opus-swift/releases/download/'+s.version.to_s+'/YbridOpus.xcframework.zip' }
+    s.source           = { :http => 'https://github.com/tomLadder/opus-swift/releases/download/'+s.version.to_s+'/YbridOpus.xcframework.zip' }
 
-    s.ios.deployment_target = '9.0'
-    s.osx.deployment_target = '10.10'
+    s.ios.deployment_target = '11.0'
 
     s.framework    = 'YbridOpus'
     s.vendored_frameworks = 'YbridOpus.xcframework'
